@@ -84,6 +84,7 @@ fun ArtSpaceApp() {
             )
         }
 
+
         // Кнопки
         Row(
             modifier = Modifier.fillMaxWidth(),
