@@ -1,11 +1,8 @@
 <resources>
     <string name="app_name">MyApplication1</string>
-    <string name="artwork_title_1">Starry Night</string>
-    <string name="artwork_artist_1">Vincent van Gogh (1889)</string>
-    <string name="artwork_title_2">The Persistence of Memory</string>
-    <string name="artwork_artist_2">Salvador Dalí (1931)</string>
-    <string name="artwork_title_3">The Great Wave</string>
-    <string name="artwork_artist_3">Katsushika Hokusai (1831)</string>
-    <string name="previous">Previous</string>
-    <string name="next">Next</string>
+    <string name="calculate_tip">Calculate Tip</string>
+    <string name="bill_amount">Bill Amount</string>
+    <string name="tip_percentage">Tip Percentage</string>
+    <string name="round_up_tip">Round up tip?</string>
+    <string name="tip_amount">Tip Amount: %s</string>
 </resources>
