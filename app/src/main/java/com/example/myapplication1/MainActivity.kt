@@ -3,20 +3,23 @@ package com.example.myapplication1
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.myapplication1.ui.theme.MyApplication1Theme
+import java.text.NumberFormat
+import kotlin.math.ceil
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,91 +27,103 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplication1Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    ArtSpaceApp()
+                    TipTimeLayout()
                 }
             }
         }
     }
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
-fun ArtSpaceApp() {
-    var currentIndex by remember { mutableStateOf(1) }
+fun TipTimeLayout() {
+    var amountInput by remember { mutableStateOf("") }
+    var tipInput by remember { mutableStateOf("") }
+    var roundUp by remember { mutableStateOf(false) }
+
+    val amount = amountInput.toDoubleOrNull() ?: 0.0
+    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount, tipPercent, roundUp)
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+            .statusBarsPadding()
+            .padding(horizontal = 40.dp)
+            .verticalScroll(rememberScrollState())
+            .safeDrawingPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Картинка
-        Image(
-            painter = painterResource(id = when (currentIndex) {
-                1 -> R.drawable.image1
-                2 -> R.drawable.image2
-                else -> R.drawable.image3
-            }),
-            contentDescription = null,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            contentScale = ContentScale.Fit
+        Text(
+            text = stringResource(R.string.calculate_tip),
+            modifier = Modifier
+                .padding(bottom = 16.dp, top = 40.dp)
+                .align(Alignment.Start)
         )
 
-        // Подпись
-        Column(
+        EditNumberField(
+            value = amountInput,
+            onValueChange = { amountInput = it },
+            label = stringResource(R.string.bill_amount),
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next,
             modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(bottom = 32.dp)
+                .fillMaxWidth()
+        )
+
+        EditNumberField(
+            value = tipInput,
+            onValueChange = { tipInput = it },
+            label = stringResource(R.string.tip_percentage),
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Done,
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .fillMaxWidth()
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_title_1
-                        2 -> R.string.artwork_title_2
-                        else -> R.string.artwork_title_3
-                    }
-                ),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_artist_1
-                        2 -> R.string.artwork_artist_2
-                        else -> R.string.artwork_artist_3
-                    }
-                ),
-                fontSize = 16.sp
-            )
+            Text(text = stringResource(R.string.round_up_tip), modifier = Modifier.weight(1f))
+            Switch(checked = roundUp, onCheckedChange = { roundUp = it })
         }
 
-        // Кнопки
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(
-                onClick = { if (currentIndex > 1) currentIndex-- },
-                modifier = Modifier.weight(1f).padding(end = 8.dp)
-            ) {
-                Text(stringResource(R.string.previous))
-            }
-            Button(
-                onClick = { if (currentIndex < 3) currentIndex++ },
-                modifier = Modifier.weight(1f).padding(start = 8.dp)
-            ) {
-                Text(stringResource(R.string.next))
-            }
-        }
+        Text(
+            text = stringResource(R.string.tip_amount, tip),
+            style = MaterialTheme.typography.headlineMedium
+        )
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun ArtSpacePreview() {
-    MyApplication1Theme {
-        ArtSpaceApp()
+fun EditNumberField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    keyboardType: KeyboardType,
+    imeAction: ImeAction,
+    modifier: Modifier = Modifier
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
+        modifier = modifier
+    )
+}
+
+@VisibleForTesting
+internal fun calculateTip(amount: Double, tipPercent: Double = 15.0, roundUp: Boolean = false): String {
+    var tip = tipPercent / 100 * amount
+    if (roundUp) {
+        tip = ceil(tip)
     }
+    return NumberFormat.getCurrencyInstance().format(tip)
 }
