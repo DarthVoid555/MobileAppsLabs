@@ -6,13 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplication1Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    ArtSpaceApp()
+                    ArticleApp()
                 }
             }
         }
@@ -32,83 +33,38 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ArtSpaceApp() {
-    var currentIndex by remember { mutableStateOf(1) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // Картинка
+fun ArticleApp() {
+    Column(modifier = Modifier.fillMaxSize()) {
         Image(
-            painter = painterResource(id = when (currentIndex) {
-                1 -> R.drawable.image1
-                2 -> R.drawable.image2
-                else -> R.drawable.image3
-            }),
+            painter = painterResource(id = R.drawable.bg_compose_image),
             contentDescription = null,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            contentScale = ContentScale.Fit
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            contentScale = ContentScale.Crop
         )
-
-        // Подпись
-        Column(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(modifier = Modifier.padding(all = 16.dp)) {
             Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_title_1
-                        2 -> R.string.artwork_title_2
-                        else -> R.string.artwork_title_3
-                    }
-                ),
+                text = stringResource(id = R.string.title),
                 fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
             Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_artist_1
-                        2 -> R.string.artwork_artist_2
-                        else -> R.string.artwork_artist_3
-                    }
-                ),
-                fontSize = 16.sp
+                text = stringResource(id = R.string.paragraph1),
+                fontSize = 16.sp,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-        }
-
-        // Кнопки
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(
-                onClick = { if (currentIndex > 1) currentIndex-- },
-                modifier = Modifier.weight(1f).padding(end = 8.dp)
-            ) {
-                Text(stringResource(R.string.previous))
-            }
-            Button(
-                onClick = { if (currentIndex < 3) currentIndex++ },
-                modifier = Modifier.weight(1f).padding(start = 8.dp)
-            ) {
-                Text(stringResource(R.string.next))
-            }
+            Text(
+                text = stringResource(id = R.string.paragraph2),
+                fontSize = 16.sp,
+                textAlign = TextAlign.Justify
+            )
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun ArtSpacePreview() {
-    MyApplication1Theme {
-        ArtSpaceApp()
-    }
+fun ArticlePreview() {
+    MyApplication1Theme { ArticleApp() }
 }
