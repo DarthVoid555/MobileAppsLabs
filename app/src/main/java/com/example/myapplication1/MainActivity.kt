@@ -5,17 +5,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.myapplication1.data.DataSource
+import com.example.myapplication1.model.Topic
 import com.example.myapplication1.ui.theme.MyApplication1Theme
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplication1Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    ArtSpaceApp()
+                    TopicGrid()
                 }
             }
         }
@@ -32,74 +35,51 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ArtSpaceApp() {
-    var currentIndex by remember { mutableStateOf(1) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+fun TopicGrid() {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(count = 2),
+        contentPadding = PaddingValues(all = 8.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
-        // Картинка
-        Image(
-            painter = painterResource(id = when (currentIndex) {
-                1 -> R.drawable.image1
-                2 -> R.drawable.image2
-                else -> R.drawable.image3
-            }),
-            contentDescription = null,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            contentScale = ContentScale.Fit
-        )
-
-        // Подпись
-        Column(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_title_1
-                        2 -> R.string.artwork_title_2
-                        else -> R.string.artwork_title_3
-                    }
-                ),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_artist_1
-                        2 -> R.string.artwork_artist_2
-                        else -> R.string.artwork_artist_3
-                    }
-                ),
-                fontSize = 16.sp
-            )
+        items(DataSource.topics) { topic ->
+            TopicCard(topic = topic, modifier = Modifier.padding(all = 4.dp))
         }
+    }
+}
 
-        // Кнопки
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(
-                onClick = { if (currentIndex > 1) currentIndex-- },
-                modifier = Modifier.weight(1f).padding(end = 8.dp)
+@Composable
+fun TopicCard(topic: Topic, modifier: Modifier = Modifier) {
+    Card(modifier = modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.height(68.dp)) {
+            // Картинка слева
+            Image(
+                painter = painterResource(topic.imageResId),
+                contentDescription = null,
+                modifier = Modifier
+                    .width(68.dp)
+                    .fillMaxHeight(),
+                contentScale = ContentScale.Crop
+            )
+            // Текст справа
+            Column(
+                modifier = Modifier
+                    .padding(all = 16.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
             ) {
-                Text(stringResource(R.string.previous))
-            }
-            Button(
-                onClick = { if (currentIndex < 3) currentIndex++ },
-                modifier = Modifier.weight(1f).padding(start = 8.dp)
-            ) {
-                Text(stringResource(R.string.next))
+                Text(
+                    text = stringResource(topic.nameResId),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    // Простая иконка "сетка" из эмодзи
+                    Text(text = "\uD83D\uDD32", style = MaterialTheme.typography.labelMedium)
+                    Text(
+                        text = topic.availableCourses.toString(),
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
             }
         }
     }
@@ -107,8 +87,9 @@ fun ArtSpaceApp() {
 
 @Preview(showBackground = true)
 @Composable
-fun ArtSpacePreview() {
+fun TopicGridPreview() {
     MyApplication1Theme {
-        ArtSpaceApp()
+        TopicGrid()
     }
 }
+
