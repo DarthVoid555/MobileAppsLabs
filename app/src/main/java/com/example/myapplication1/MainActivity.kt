@@ -3,127 +3,96 @@ package com.example.myapplication1
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.annotation.VisibleForTesting
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.myapplication1.ui.theme.MyApplication1Theme
-import java.text.NumberFormat
-import kotlin.math.ceil
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplication1Theme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    TipTimeLayout()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    // Здесь вызываем нашу функцию с картинкой
+                    GreetingImage(
+                        message = stringResource(R.string.happy_birthday_text),
+                        from = stringResource(R.string.signature_text),
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
         }
     }
 }
 
-@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+// Функция для отображения картинки с текстом поверх неё
 @Composable
-fun TipTimeLayout() {
-    var amountInput by remember { mutableStateOf("") }
-    var tipInput by remember { mutableStateOf("") }
-    var roundUp by remember { mutableStateOf(false) }
+fun GreetingImage(message: String, from: String, modifier: Modifier = Modifier) {
+    val image = painterResource(R.drawable.androidparty) // Убедитесь, что картинка лежит в drawable
+    Box(modifier) {
+        Image(
+            painter = image,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            alpha = 0.5F
+        )
+        GreetingText(
+            message = message,
+            from = from,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+        )
+    }
+}
 
-    val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount, tipPercent, roundUp)
-
+// Функция для отображения текста
+@Composable
+fun GreetingText(message: String, from: String, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier
-            .statusBarsPadding()
-            .padding(horizontal = 40.dp)
-            .verticalScroll(rememberScrollState())
-            .safeDrawingPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
     ) {
         Text(
-            text = stringResource(R.string.calculate_tip),
-            modifier = Modifier
-                .padding(bottom = 16.dp, top = 40.dp)
-                .align(Alignment.Start)
+            text = message,
+            fontSize = 100.sp,
+            lineHeight = 116.sp,
+            textAlign = TextAlign.Center
         )
-
-        EditNumberField(
-            value = amountInput,
-            onValueChange = { amountInput = it },
-            label = stringResource(R.string.bill_amount),
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Next,
-            modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
-        )
-
-        EditNumberField(
-            value = tipInput,
-            onValueChange = { tipInput = it },
-            label = stringResource(R.string.tip_percentage),
-            keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Done,
-            modifier = Modifier
-                .padding(bottom = 32.dp)
-                .fillMaxWidth()
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 32.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = stringResource(R.string.round_up_tip), modifier = Modifier.weight(1f))
-            Switch(checked = roundUp, onCheckedChange = { roundUp = it })
-        }
-
         Text(
-            text = stringResource(R.string.tip_amount, tip),
-            style = MaterialTheme.typography.headlineMedium
+            text = from,
+            fontSize = 36.sp,
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.End)
         )
     }
 }
 
+// Для предпросмотра в Android Studio (без запуска эмулятора)
+@Preview(showBackground = true)
 @Composable
-fun EditNumberField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
-    keyboardType: KeyboardType,
-    imeAction: ImeAction,
-    modifier: Modifier = Modifier
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
-        modifier = modifier
-    )
-}
-
-@VisibleForTesting
-internal fun calculateTip(amount: Double, tipPercent: Double = 15.0, roundUp: Boolean = false): String {
-    var tip = tipPercent / 100 * amount
-    if (roundUp) {
-        tip = ceil(tip)
+fun BirthdayCardPreview() {
+    MyApplication1Theme {
+        GreetingImage(
+            message = "Happy Birthday Sam!",
+            from = "From Emma"
+        )
     }
-    return NumberFormat.getCurrencyInstance().format(tip)
 }
