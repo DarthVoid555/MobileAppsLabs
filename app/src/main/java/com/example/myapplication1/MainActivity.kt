@@ -3,18 +3,18 @@ package com.example.myapplication1
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.myapplication1.ui.theme.MyApplication1Theme
 
 class MainActivity : ComponentActivity() {
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplication1Theme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    TaskManagerScreen()
+                    QuadrantScreen()
                 }
             }
         }
@@ -31,30 +31,64 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TaskManagerScreen() {
+fun QuadrantScreen() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.weight(1f)) {
+            QuadrantCard(
+                title = stringResource(id = R.string.text_composable_title),
+                description = stringResource(id = R.string.text_composable_desc),
+                bgColor = Color(0xFFEADDFF),
+                modifier = Modifier.weight(1f)
+            )
+            QuadrantCard(
+                title = stringResource(id = R.string.image_composable_title),
+                description = stringResource(id = R.string.image_composable_desc),
+                bgColor = Color(0xFFD0BCFF),
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Row(modifier = Modifier.weight(1f)) {
+            QuadrantCard(
+                title = stringResource(id = R.string.row_composable_title),
+                description = stringResource(id = R.string.row_composable_desc),
+                bgColor = Color(0xFFB69DF8),
+                modifier = Modifier.weight(1f)
+            )
+            QuadrantCard(
+                title = stringResource(id = R.string.column_composable_title),
+                description = stringResource(id = R.string.column_composable_desc),
+                bgColor = Color(0xFFF3EDF7),
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+fun QuadrantCard(title: String, description: String, bgColor: Color, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
+            .fillMaxSize()
+            .background(bgColor)
+            .padding(all = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_task_completed),
-            contentDescription = null
-        )
         Text(
-            text = stringResource(id = R.string.all_tasks_completed),
+            text = title,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(top = 24.dp, bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 16.dp),
+            textAlign = TextAlign.Center
         )
         Text(
-            text = stringResource(id = R.string.nice_work),
-            fontSize = 16.sp
+            text = description,
+            textAlign = TextAlign.Justify
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun TaskManagerPreview() {
-    MyApplication1Theme { TaskManagerScreen() }
+fun QuadrantPreview() {
+    MyApplication1Theme { QuadrantScreen() }
 }
