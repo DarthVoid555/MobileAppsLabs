@@ -5,14 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,92 +25,74 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MyApplication1Theme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    ArtSpaceApp()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    // Здесь вызываем нашу функцию с картинкой
+                    GreetingImage(
+                        message = stringResource(R.string.happy_birthday_text),
+                        from = stringResource(R.string.signature_text),
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
         }
     }
 }
 
+// Функция для отображения картинки с текстом поверх неё
 @Composable
-fun ArtSpaceApp() {
-    var currentIndex by remember { mutableStateOf(1) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        // Картинка
+fun GreetingImage(message: String, from: String, modifier: Modifier = Modifier) {
+    val image = painterResource(R.drawable.androidparty) // Убедитесь, что картинка лежит в drawable
+    Box(modifier) {
         Image(
-            painter = painterResource(id = when (currentIndex) {
-                1 -> R.drawable.image1
-                2 -> R.drawable.image2
-                else -> R.drawable.image3
-            }),
+            painter = image,
             contentDescription = null,
-            modifier = Modifier.weight(1f).fillMaxWidth(),
-            contentScale = ContentScale.Fit
+            contentScale = ContentScale.Crop,
+            alpha = 0.5F
         )
-
-        // Подпись
-        Column(
+        GreetingText(
+            message = message,
+            from = from,
             modifier = Modifier
-                .padding(vertical = 16.dp)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_title_1
-                        2 -> R.string.artwork_title_2
-                        else -> R.string.artwork_title_3
-                    }
-                ),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = stringResource(
-                    when (currentIndex) {
-                        1 -> R.string.artwork_artist_1
-                        2 -> R.string.artwork_artist_2
-                        else -> R.string.artwork_artist_3
-                    }
-                ),
-                fontSize = 16.sp
-            )
-        }
-
-        // Кнопки
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Button(
-                onClick = { if (currentIndex > 1) currentIndex-- },
-                modifier = Modifier.weight(1f).padding(end = 8.dp)
-            ) {
-                Text(stringResource(R.string.previous))
-            }
-            Button(
-                onClick = { if (currentIndex < 3) currentIndex++ },
-                modifier = Modifier.weight(1f).padding(start = 8.dp)
-            ) {
-                Text(stringResource(R.string.next))
-            }
-        }
+                .fillMaxSize()
+                .padding(8.dp)
+        )
     }
 }
 
+// Функция для отображения текста
+@Composable
+fun GreetingText(message: String, from: String, modifier: Modifier = Modifier) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+    ) {
+        Text(
+            text = message,
+            fontSize = 100.sp,
+            lineHeight = 116.sp,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = from,
+            fontSize = 36.sp,
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.End)
+        )
+    }
+}
+
+// Для предпросмотра в Android Studio (без запуска эмулятора)
 @Preview(showBackground = true)
 @Composable
-fun ArtSpacePreview() {
+fun BirthdayCardPreview() {
     MyApplication1Theme {
-        ArtSpaceApp()
+        GreetingImage(
+            message = "Happy Birthday Sam!",
+            from = "From Emma"
+        )
     }
 }
