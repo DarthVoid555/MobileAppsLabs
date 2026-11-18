@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">Jetpack Compose tutorial</string>
-    <string name="title">Jetpack Compose tutorial</string>
-    <string name="paragraph1">Jetpack Compose is a modern toolkit for building native Android UI...</string>
-    <string name="paragraph2">In this tutorial, you build a simple UI component with declarative functions...</string>
+    <string name="app_name">Task Manager</string>
+    <string name="all_tasks_completed">All tasks completed</string>
+    <string name="nice_work">Nice Work!</string>
 </resources>
