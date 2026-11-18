@@ -1,8 +1,13 @@
 <resources>
-    <string name="app_name">Compose Quadrant</string>
-    <string name="my_name">Сизов Максим</string>
-    <string name="my_title">Студент</string>
-    <string name="my_phone">+7 (950) 269-28-44</string>
-    <string name="my_social">@my_handle</string>
-    <string name="my_email">makssizov200206@gmail.com</string>
+    <string name="app_name">Affirmations</string>
+    <string name="affirmation1">I am strong.</string>
+    <string name="affirmation2">I believe in myself.</string>
+    <string name="affirmation3">Each day is a new opportunity to grow and be a better version of myself.</string>
+    <string name="affirmation4">Every challenge is an opportunity to learn.</string>
+    <string name="affirmation5">I am grateful for the present moment.</string>
+    <string name="affirmation6">I radiate love and positivity.</string>
+    <string name="affirmation7">I am capable of achieving my goals.</string>
+    <string name="affirmation8">My mind is calm, and my heart is full.</string>
+    <string name="affirmation9">I choose to be happy and free.</string>
+    <string name="affirmation10">I am the architect of my life.</string>
 </resources>
